@@ -21,6 +21,12 @@ func NewDispatcher(maxWorkers int, jobQueue chan GenericJob) *Dispatcher {
 	return &Dispatcher{WorkerPool: pool, MaxWorkers: maxWorkers, JobQueue: jobQueue}
 }
 
+func (d *Dispatcher) StopWorkers() {
+	for _, w := range d.Workers {
+		w.quit <- true
+	}
+}
+
 // Run func
 func (d *Dispatcher) Run() {
 	// starting n number of workers
