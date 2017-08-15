@@ -1,5 +1,5 @@
 package worker_pool
 
 type GenericJob interface {
-	Start()
+	Start(id int)
 }

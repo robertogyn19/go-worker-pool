@@ -32,7 +32,7 @@ func (d *Dispatcher) Run() {
 	// starting n number of workers
 	for i := 0; i < d.MaxWorkers; i++ {
 		worker := NewWorker(d.WorkerPool)
-		worker.Start()
+		worker.Start(i+1)
 
 		d.Workers = append(d.Workers, worker)
 	}

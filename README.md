@@ -5,39 +5,40 @@ A "better" version of this [example](http://marcio.io/2015/07/handling-1-million
 Simple and useful (for me) worker-pool with configurable queue size.
 Usage example:
 
-``` golang
+```go
 package main
 
 import (
 	"fmt"
-	"time"
-	"sync"
 	"math/rand"
+	"sync"
+	"time"
 
 	wp "github.com/robertogyn19/go-worker-pool"
 )
 
 type CustomJob struct {
 	Number int
-	wg *sync.WaitGroup
+	wg     *sync.WaitGroup
 }
 
-func (cj *CustomJob) Start() {
-	work(cj.Number)
+func (cj *CustomJob) Start(id int) {
+	work(cj.Number, id)
 	cj.wg.Done()
 }
 
 var count int
 
-func work(i int) {
+func work(i, id int) {
 	r := rand.Intn(100)
 	d := time.Duration(r) * time.Millisecond
-	fmt.Printf("(%d) Sleeping for %v\n", i, d)
+	fmt.Printf("(%-3d) work %-2d will sleep for %v\n", i, id, d)
 	time.Sleep(d)
 	count += 1
 }
 
 func main() {
+	start := time.Now()
 	wg := new(sync.WaitGroup)
 
 	jobChan := make(chan wp.GenericJob)
@@ -53,11 +54,12 @@ func main() {
 		jobChan <- cj
 	}
 
-    // You need wait all jobs
+	// You need wait all jobs
 	wg.Wait()
 
-	fmt.Println("Final count:", count)
+	fmt.Printf("final count: %d (%v)\n", count, time.Since(start))
 }
+
 ```
 
 ### TODO
